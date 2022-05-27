@@ -1,0 +1,87 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'nu.studer.jooq' version '6.0.1'  // gradle-jooq-plugin
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.postgresql:postgresql:42.3.6'
+    jooqGenerator('org.postgresql:postgresql:42.3.6')
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+jooq {
+//    version = '3.15.1'  // default (can be omitted)
+//    edition = nu.studer.gradle.jooq.JooqEdition.OSS  // default (can be omitted)
+
+    configurations {
+        main {  // name of the jOOQ configuration
+            generateSchemaSourceOnCompilation = true  // default (can be omitted)
+
+            generationTool {
+
+                logging = 'WARN' // TRACE, DEBUG, INFO, WARN, ERROR, FATAL
+                onError = 'LOG'  // FAIL, LOG, SILENT
+
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5432/jooq-test'
+                    user = 'postgres'
+                    password = '1234'
+//                    properties {
+//                        property {
+//                            key = 'ssl'
+//                            value = 'true'
+//                        }
+//                    }
+                }
+
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    strategy {
+                        // org.jooq.codegen.KeepNamesGeneratorStrategy - DB 네이밍 유지: 언더바, 대소문자 등... 기본값은 PascalCaseNames
+                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                    }
+                    database {
+                        // https://www.jooq.org/doc/3.15/manual/code-generation/codegen-advanced/codegen-config-database/codegen-database-name/
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+
+                        includes = '.*' // 정규표현식
+                        excludes = 'test_.* | temp_.*'
+                    }
+                    generate {
+                        generatedSerialVersionUID = 'CONSTANT'
+                        javaTimeTypes = true    // java.time.*
+
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'com.example.jooqgen'
+                        directory = 'build/generated-src/jooq/main'  // default (can be omitted)
+//                        directory = 'src/main/java'  // default (can be omitted)
+                    }
+                }
+            }
+        }
+    }
+}
