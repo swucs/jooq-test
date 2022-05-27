@@ -3,7 +3,6 @@ package com.example.jooqtest;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,16 +10,15 @@ import java.util.List;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
+@RequiredArgsConstructor
 @Repository
-//@RequiredArgsConstructor
 public class JooqRespository {
 
-    @Autowired
-    private DSLContext dsl;
+    private final DSLContext dslContext;
 
     public void testSelect() {
 
-        Query query = dsl.select(field("BOOK.TITLE"), field("AUTHOR.FIRST_NAME"), field("AUTHOR.LAST_NAME"))
+        Query query = dslContext.select(field("BOOK.TITLE"), field("AUTHOR.FIRST_NAME"), field("AUTHOR.LAST_NAME"))
                 .from(table("BOOK"))
                 .join(table("AUTHOR"))
                 .on(field("BOOK.AUTHOR_ID").eq(field("AUTHOR.ID")))
