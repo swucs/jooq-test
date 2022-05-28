@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.0'
+    id 'org.springframework.boot' version '2.6.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'nu.studer.jooq' version '7.1.1'  // gradle-jooq-plugin
@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.postgresql:postgresql:42.3.2'
     jooqGenerator 'org.postgresql:postgresql:42.3.2'
+    jooqGenerator 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -28,17 +29,14 @@ tasks.named('test') {
 }
 
 jooq {
-    version = dependencyManagement.importedProperties['jooq.version']
+    version = '3.16.4'
     edition = nu.studer.gradle.jooq.JooqEdition.OSS  // default (can be omitted)
 
     configurations {
         main {  // name of the jOOQ configuration
-            generateSchemaSourceOnCompilation = true  // default (can be omitted)
-
+//            generateSchemaSourceOnCompilation = true  // default (can be omitted)
             generationTool {
                 logging = org.jooq.meta.jaxb.Logging.DEBUG // TRACE, DEBUG, INFO, WARN, ERROR, FATAL
-                onError = 'LOG'  // FAIL, LOG, SILENT
-
                 jdbc {
                     driver = 'org.postgresql.Driver'
                     url = 'jdbc:postgresql://localhost:5432/jooq-test'
@@ -51,12 +49,8 @@ jooq {
 //                        }
 //                    }
                 }
-
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
-                    strategy {
-                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
-                    }
                     database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
                         inputSchema = 'public'
@@ -86,6 +80,7 @@ jooq {
                         packageName = 'com.example.jooqgen'
                         directory = 'build/generated-src/jooq/main'  // default (can be omitted)
                     }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
                 }
             }
         }

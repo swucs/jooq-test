@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.16.5.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.14.15.xsd">
     <!-- Configure the database connection here -->
     <jdbc>
         <driver>org.postgresql.Driver</driver>
@@ -42,7 +42,7 @@
             <packageName>test.generated</packageName>
 
             <!-- The destination directory of your generated classes. Using Maven directory layout here -->
-            <directory>D:/project/jooq-test/src/main/java</directory>
+            <directory>D:/project/jooq-test/build/generated-src/jooq/main</directory>
         </target>
     </generator>
 </configuration>
