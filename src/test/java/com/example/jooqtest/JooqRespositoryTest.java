@@ -14,6 +14,7 @@ class JooqRespositoryTest {
 
     @Test
     void testSelectWithoutCodeGeneration() {
+        jooqRespository.testSelectWithoutCodeGeneration();
     }
 
     @Test
